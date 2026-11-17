@@ -48,6 +48,7 @@ h2{font-size:15px;font-weight:700}
 .btn:hover{border-color:var(--muted)}
 .btn.primary{background:var(--btn);border-color:var(--btn);color:var(--btn-ink)}
 .btn.primary:hover{filter:brightness(1.12)}
+.btn:disabled{opacity:.55;cursor:default}
 .btn.small{padding:5px 10px;font-size:13px}
 .btn.danger{color:var(--bad)}
 .btn.armed{background:var(--bad);border-color:var(--bad);color:#fff}
@@ -558,11 +559,19 @@ document.addEventListener("submit",function(e){
   var f=e.target,up=e.submitter&&e.submitter.dataset.auth==="up",em=f.elements.email.value.trim(),pw=f.elements.senha.value,er=$("a_err");
   if(!em||!pw){er.textContent="Informe e-mail e senha.";return}
   if(up&&pw.length<6){er.textContent="A senha precisa ter pelo menos 6 caracteres.";return}
+  if(f._busy)return;f._busy=true;
+  var btns=f.querySelectorAll("button");Array.prototype.forEach.call(btns,function(b){b.disabled=true});
+  function done(msg){f._busy=false;Array.prototype.forEach.call(btns,function(b){b.disabled=false});er.textContent=msg||""}
   er.textContent="Aguarde…";
-  (up?supa.auth.signUp({email:em,password:pw}):supa.auth.signInWithPassword({email:em,password:pw})).then(function(r){
-    if(r.error){er.textContent=up?"Não foi possível criar a conta: "+r.error.message:"E-mail ou senha incorretos.";return}
-    if(up&&!(r.data&&r.data.session))er.textContent="Conta criada. Abra o e-mail de confirmação que enviamos e depois clique em Entrar.";
-  }).catch(function(){er.textContent="Sem conexão. Tente de novo."})});
+  (up?supa.auth.signUp({email:em,password:pw,options:{emailRedirectTo:location.origin+location.pathname}}):supa.auth.signInWithPassword({email:em,password:pw})).then(function(r){
+    if(r.error){var c=r.error.code||"",st=r.error.status;
+      if(c==="email_not_confirmed")return done("Falta confirmar o e-mail. Abra a mensagem do Supabase na sua caixa de entrada (ou no spam) e clique no link.");
+      if(st===429||c.indexOf("rate_limit")>=0)return done(up?"O e-mail de confirmação já foi enviado. Confira a caixa de entrada e o spam; para pedir outro, aguarde um minuto.":"Muitas tentativas. Aguarde um minuto e tente de novo.");
+      if(c==="user_already_exists")return done("Essa conta já existe. Clique em Entrar.");
+      if(c==="signup_disabled")return done("A criação de novas contas está desligada neste sistema.");
+      return done(up?"Não foi possível criar a conta. Aguarde um minuto e tente de novo.":"E-mail ou senha incorretos.")}
+    done(up&&!(r.data&&r.data.session)?"Conta criada. Abra o e-mail de confirmação que enviamos (veja também o spam), clique no link e depois em Entrar.":"");
+  }).catch(function(){done("Sem conexão. Tente de novo.")})});
 dlg.addEventListener("close",function(){form._preview=null});
 var tip=$("tip");
 document.addEventListener("mousemove",function(e){var t=e.target.closest&&e.target.closest("[data-tip]");
