@@ -19,24 +19,6 @@
   --body:"Albert Sans","Segoe UI",system-ui,-apple-system,sans-serif;
   color-scheme:light;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --paper:#1a1512; --surface:#241c18; --ink:#f1e6df; --muted:#b5a298; --line:#3b2f29;
-  --mat:#2b201b; --mat-ink:#f3ddd0; --mat-line:rgba(243,221,208,.05); --mat-line-strong:rgba(243,221,208,.11);
-  --blush:#f3ddd0; --blush-ink:#4a2a1c; --sel:#f3ddd0; --sel-ink:#3a2218; --btn:#8a5740; --btn-ink:#ffffff;
-  --good:#4cc38a; --warn:#e0a93b; --bad:#f0736a;
-    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --paper:#1a1512; --surface:#241c18; --ink:#f1e6df; --muted:#b5a298; --line:#3b2f29;
-  --mat:#2b201b; --mat-ink:#f3ddd0; --mat-line:rgba(243,221,208,.05); --mat-line-strong:rgba(243,221,208,.11);
-  --blush:#f3ddd0; --blush-ink:#4a2a1c; --sel:#f3ddd0; --sel-ink:#3a2218; --btn:#8a5740; --btn-ink:#ffffff;
-  --good:#4cc38a; --warn:#e0a93b; --bad:#f0736a;
-  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181;
-  color-scheme:dark;
-}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
